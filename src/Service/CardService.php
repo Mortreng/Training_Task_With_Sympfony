@@ -2,16 +2,13 @@
 
 namespace App\Service;
 
+use App\Entity\Card\CardVendors;
+use ErrorException;
+
 class CardService
 {
-    public function VerifyAndCollectCardData(string $Pan): bool {
-
-        $cardPrefixes = [
-            'Visa'=> ['4'],
-            'Maestro' => array_merge(['50','56','58','57'], range('60', '69')),
-            'Daroni' => ['14','81','99'],
-            'MasterCard' => ['TwoPrefixInn' => range('51', '55'), 'SixPrefixInn'=> range('2221', '2720')]];
-        $digits = strrev(preg_replace('/\D+/', '', $Pan));
+    private function VerifyCardPan(string $pan): bool {
+        $digits = strrev(preg_replace('/\D+/', '', $pan));
         $sum = 0;
 
         for ($i = 0, $j = strlen($digits); $i < $j; $i++) {
@@ -25,33 +22,53 @@ class CardService
             }
             $sum += $val;
         }
-        echo "the sum of all digits equals $sum" . PHP_EOL;
 
         if (($sum % 10) == 0) {
-            switch ($Pan) {
-                case in_array(substr($Pan, 0,1), $cardPrefixes['Visa']) && in_array(strlen($Pan), [13, 16]):
-                    //$card = new Card(CardVendors::Visa, $randomPan);
-                    echo 'This is a Visa Card' . PHP_EOL;
-                    return true;
-                case in_array(substr($Pan, 0, 2), $cardPrefixes['Daroni'] ) && strlen($Pan) == 14:
-                    //$card = new Card(CardVendors::DaroniCredit, $randomPan);
-                    echo 'This is a Daroni Credit Card' . PHP_EOL;
-                    return true;
-                case in_array(substr($Pan,0, 2), $cardPrefixes['MasterCard']['TwoPrefixInn']) || in_array(substr($Pan,0, 6), $cardPrefixes['MasterCard']['SixPrefixInn']) && strlen($Pan) == 16:
-                    //$card = new Card(CardVendors::MasterCard, $randomPan);
-                    echo 'This is a MasterCard Credit Card' . PHP_EOL;
-                    return true;
-                case in_array(substr($Pan, 0, 2), $cardPrefixes['Maestro']) && in_array(strlen($Pan), range(12, 19)):
-                    //$card = new Card(CardVendors::Maestro, $randomPan);
-                    echo 'This is a Maestro Card' . PHP_EOL;
-                    return true;
-                default:
-                    echo "the number entered doesn't match with any of the card vendors, try another";
-                    return false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function DetermineCardVendor(string $pan): CardVendors {
+
+        // Magic numbers, need to somehow get those values from the config.
+        $cardPrefixes = [
+            'Visa'=> ['4'],
+            'Maestro' => array_merge(['50','56','58','57'], range('60', '69')),
+            'Daroni' => ['14','81','99'],
+            'MasterCard' => ['TwoPrefixInn' => range('51', '55'), 'FourPrefixInn'=> range('2221', '2720')]
+        ];
+
+        switch ($pan) {
+            case in_array(substr($pan, 0,1), $cardPrefixes['Visa']) && in_array(strlen($pan), [13, 16]):
+                return CardVendors::Visa;
+            case in_array(substr($pan, 0, 2), $cardPrefixes['Daroni'] ) && strlen($pan) == 14:
+                return CardVendors::DaroniCredit;
+            case in_array(substr($pan,0, 2), $cardPrefixes['MasterCard']['TwoPrefixInn']) || in_array(substr($pan,0, 6), $cardPrefixes['MasterCard']['FourPrefixInn']) && strlen($pan) == 16:
+                return CardVendors::MasterCard;
+            case in_array(substr($pan, 0, 2), $cardPrefixes['Maestro']) && in_array(strlen($pan), range(12, 19)):
+                return CardVendors::Maestro;
+            default:
+                return CardVendors::Unknown;
+        }
+    }
+
+    //This code reeks need to do something actually decent
+    /**
+     * @throws ErrorException
+     */
+    public function GatherCardData(string $pan): string {
+        if ($this->VerifyCardPan($pan)) {
+            $vendor = $this->DetermineCardVendor($pan);
+            if ($vendor != CardVendors::Unknown) {
+                //$card = new Card($pan, $vendor);
+                return "It worked, here is your vendor: $vendor->name";
+            } else {
+                throw new ErrorException("Unknown card vendor, we support Visa, Master Card, Maestro, Daroni Credit" . PHP_EOL);
             }
         } else {
-            echo "$Pan didn't pass the Luhm algorithm" . PHP_EOL;
-            return false;
+            throw new ErrorException("$pan didn't pass the Luhm algorithm" . PHP_EOL);
         }
     }
 }
