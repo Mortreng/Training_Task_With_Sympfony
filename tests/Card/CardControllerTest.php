@@ -6,11 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class CardControllerTest extends WebTestCase
 {
 
-    /**
-     * @test
-     *
-     */
-
     public function clientTest() {
         $client = static::createClient();
         $client->followRedirects();

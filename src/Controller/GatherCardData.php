@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Card;
 use App\Service\CardService;
 use ErrorException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -13,8 +14,17 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class GatherCardData extends AbstractController
 {
+
+    private CardService $cardService;
+
+    public function __construct(
+        CardService $cardService
+    ) {
+        $this->cardService = $cardService;
+    }
+
     #[Route('/card', name: 'gather_card_data')]
-    public function GatherCardData(Request $request, CardService $cardService): Response {
+    public function GatherCardData(Request $request): Response {
 
         $card = [];
         $cardForm = $this -> createFormBuilder($card)
@@ -27,7 +37,7 @@ class GatherCardData extends AbstractController
         if ($cardForm->isSubmitted() && $cardForm->isValid()) {
             try {
                 $card = $cardForm -> getData();
-                $result = $cardService->GatherCardData($card['pan']);
+                $result = $this->cardService->GatherCardData($card['pan']);
             } catch (ErrorException $e) {
                 return $this->redirectToRoute('verification_failure',['e' => $e->getMessage()]);
             }
@@ -47,6 +57,6 @@ class GatherCardData extends AbstractController
 
     #[Route('/card/verification_success/{s}', name:'verification_success',methods:['GET'])]
     public function VerificationSuccess(string $s): Response {
-        return new Response("<html lang=en><body> verification passed, $s</body></html>");
+        return new Response("<html lang=en><body> verification passed, $s. </body></html>");
     }
 }
