@@ -4,7 +4,7 @@ gather_card_data:
 
 verification_failure:
   path: /card/verification_failure/{e}
-  controller: App/Controller/GatherCardData::list
+  controller: App/Controller/VerificationFailure::list
   methods: GET
 
 verification_success:

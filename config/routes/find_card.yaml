@@ -1,0 +1,4 @@
+find_card:
+  path: /find_card/{id}
+  controller: App/Controller/FindCardData::list
+  methods: GET

@@ -2,11 +2,23 @@
 
 namespace App\Service;
 
-use App\Entity\Card\CardVendors;
+use App\Entity\Card;
+use App\Entity\CardVendors;
+use App\Repository\BaseEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use ErrorException;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 class CardService
 {
+    private BaseEntityRepository $baseEntityRepository;
+
+    public function __construct(
+        BaseEntityRepository $baseEntityRepository
+    ) {
+        $this->baseEntityRepository = $baseEntityRepository;
+    }
+
     private function VerifyCardPan(string $pan): bool {
         $digits = strrev(preg_replace('/\D+/', '', $pan));
         $sum = 0;
@@ -62,7 +74,13 @@ class CardService
         if ($this->VerifyCardPan($pan)) {
             $vendor = $this->DetermineCardVendor($pan);
             if ($vendor != CardVendors::Unknown) {
-                //$card = new Card($pan, $vendor);
+                /**
+                 * This sucks, need to make this constructor work
+                 */
+                $card = new Card();
+                $card->setCardVendor($vendor);
+                $card->setPan($pan);
+                $this->baseEntityRepository->setEntity($card);
                 return "It worked, here is your vendor: $vendor->name";
             } else {
                 throw new ErrorException("Unknown card vendor, we support Visa, Master Card, Maestro, Daroni Credit" . PHP_EOL);
@@ -70,5 +88,12 @@ class CardService
         } else {
             throw new ErrorException("$pan didn't pass the Luhm algorithm" . PHP_EOL);
         }
+    }
+    public function findCardObj(int $id): ?Card {
+        $card = $this->baseEntityRepository->findEntity($id);
+        if ($card instanceof Card) {
+            return $card;
+        }
+        return null;
     }
 }

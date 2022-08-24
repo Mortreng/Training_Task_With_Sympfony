@@ -11,11 +11,16 @@ class CardServiceTest extends TestCase {
      * @test
      * @dataProvider PositivePanProvider
      */
-
     public function TestGatherCardDataPositive($pan) {
 
-        $cardService = new CardService();
-        $verificationResult = $cardService-> GatherCardData($pan);
+        $baseEntityRepo = $this->getMockBuilder('App\Repository\BaseEntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+
+        $cardService = new CardService($baseEntityRepo);
+
+        $verificationResult = $cardService->GatherCardData($pan);
 
         $this-> assertNotEmpty($verificationResult);
         print_r($verificationResult . PHP_EOL);
@@ -37,11 +42,14 @@ class CardServiceTest extends TestCase {
 
     public function TestGatherCardDataNegative($pan) {
 
-        $cardService = new CardService();
+        $baseEntityRepo = $this->getMockBuilder('App\Repository\BaseEntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $cardService = new CardService($baseEntityRepo);
 
         $this-> expectException(ErrorException::class);
-        $cardService-> GatherCardData($pan);
-
+        $cardService->GatherCardData($pan);
     }
 
 
