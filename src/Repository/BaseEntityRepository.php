@@ -14,7 +14,7 @@ class BaseEntityRepository extends ServiceEntityRepository
         parent::__construct($registry, BaseEntity::class);
     }
 
-    public function setEntity(BaseEntity $baseEntity): void {
+    public function setEntity(BaseEntity $baseEntity): mixed {
 
         $entityManager = $this->getEntityManager();
 
@@ -23,6 +23,7 @@ class BaseEntityRepository extends ServiceEntityRepository
         $baseEntity->createdTime = $now;
         $entityManager->persist($baseEntity);
         $entityManager->flush();
+        return $baseEntity->getId();
     }
 
 

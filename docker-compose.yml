@@ -13,6 +13,4 @@ services:
     ports:
       - "127.0.0.1:33063:3306"
 volumes:
-###> doctrine/doctrine-bundle ###
   db-data:
-###< doctrine/doctrine-bundle ###

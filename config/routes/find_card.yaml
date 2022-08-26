@@ -1,4 +1,4 @@
 find_card:
-  path: /find_card/{id}
-  controller: App/Controller/FindCardData::list
+  path: /card/find_card/{id}
+  controller: App/Controller/FindCardObj::list
   methods: GET
