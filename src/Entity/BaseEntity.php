@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
+
 use App\Repository\BaseEntityRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\InheritanceType;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BaseEntityRepository::class)]
 #[ORM\InheritanceType('JOINED')]
@@ -20,9 +19,11 @@ class BaseEntity
     #[ORM\Column(type:'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[Groups(['FindCardObj', 'GatherCardData'])]
     public int $id;
 
     #[ORM\Column(type: 'datetime')]
+    #[Groups(['FindCardObj'])]
     public DateTime $createdTime;
 
 

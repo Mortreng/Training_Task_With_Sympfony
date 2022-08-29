@@ -5,9 +5,7 @@ namespace App\Service;
 use App\Entity\Card;
 use App\Entity\CardVendors;
 use App\Repository\BaseEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use ErrorException;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 class CardService
 {
@@ -19,7 +17,7 @@ class CardService
         $this->baseEntityRepository = $baseEntityRepository;
     }
 
-    private function VerifyCardPan(string $pan): bool {
+    private function verifyCardPan(string $pan): bool {
         $digits = strrev(preg_replace('/\D+/', '', $pan));
         $sum = 0;
 
@@ -42,7 +40,7 @@ class CardService
         }
     }
 
-    private function DetermineCardVendor(string $pan): CardVendors {
+    private function determineCardVendor(string $pan): CardVendors {
 
         // Magic numbers, need to somehow get those values from the config.
         $cardPrefixes = [
@@ -66,22 +64,17 @@ class CardService
         }
     }
 
-    //This code reeks need to do something actually decent
     /**
      * @throws ErrorException
      */
-    public function GatherCardData(string $pan): string {
+    public function gatherCardData(string $pan): int {
         if ($this->VerifyCardPan($pan)) {
             $vendor = $this->DetermineCardVendor($pan);
             if ($vendor != CardVendors::Unknown) {
-                /**
-                 * This sucks, need to make this constructor work
-                 */
-                $card = new Card();
-                $card->setCardVendor($vendor);
-                $card->setPan($pan);
-                $this->baseEntityRepository->setEntity($card);
-                return "It worked, here is your vendor: $vendor->name";
+                $card = new Card($pan, $vendor);
+                $cardId = $this->baseEntityRepository->setEntity($card);
+                return $cardId;
+
             } else {
                 throw new ErrorException("Unknown card vendor, we support Visa, Master Card, Maestro, Daroni Credit" . PHP_EOL);
             }

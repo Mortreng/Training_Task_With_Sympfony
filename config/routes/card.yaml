@@ -1,13 +1,3 @@
 gather_card_data:
-  path: /card
+  path: /card/gather_card_data/{pan}
   controller: App/Controller/GatherCardData::list
-
-verification_failure:
-  path: /card/verification_failure/{e}
-  controller: App/Controller/VerificationFailure::list
-  methods: GET
-
-verification_success:
-  path: /card/verification_success
-  controller: App/Controller/VerificationSuccess::list
-  methods: GET

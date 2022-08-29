@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\BaseEntity;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 class BaseEntityRepository extends ServiceEntityRepository
@@ -14,7 +13,7 @@ class BaseEntityRepository extends ServiceEntityRepository
         parent::__construct($registry, BaseEntity::class);
     }
 
-    public function setEntity(BaseEntity $baseEntity): void {
+    public function setEntity(BaseEntity $baseEntity): mixed {
 
         $entityManager = $this->getEntityManager();
 
@@ -23,6 +22,7 @@ class BaseEntityRepository extends ServiceEntityRepository
         $baseEntity->createdTime = $now;
         $entityManager->persist($baseEntity);
         $entityManager->flush();
+        return $baseEntity->getId();
     }
 
 

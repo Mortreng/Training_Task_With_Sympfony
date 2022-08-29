@@ -1,6 +1,7 @@
 <?php
 namespace App\Tests\Card;
 
+use App\Repository\BaseEntityRepository;
 use App\Service\CardService;
 use ErrorException;
 use PHPUnit\Framework\TestCase;
@@ -13,17 +14,19 @@ class CardServiceTest extends TestCase {
      */
     public function TestGatherCardDataPositive($pan) {
 
-        $baseEntityRepo = $this->getMockBuilder('App\Repository\BaseEntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        $baseEntityRepo = $this->createMock(BaseEntityRepository::class);
+
+        $baseEntityRepo -> expects($this->any())
+            ->method('setEntity')
+            ->willReturn(1);
 
 
         $cardService = new CardService($baseEntityRepo);
 
-        $verificationResult = $cardService->GatherCardData($pan);
+        $verificationResult = $cardService->gatherCardData($pan);
 
         $this-> assertNotEmpty($verificationResult);
-        print_r($verificationResult . PHP_EOL);
     }
 
     public function PositivePanProvider(): array {
@@ -42,14 +45,16 @@ class CardServiceTest extends TestCase {
 
     public function TestGatherCardDataNegative($pan) {
 
-        $baseEntityRepo = $this->getMockBuilder('App\Repository\BaseEntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $baseEntityRepo = $this->createMock(BaseEntityRepository::class);
+
+        $baseEntityRepo -> expects($this->any())
+            ->method('setEntity')
+            ->willReturn(1);
 
         $cardService = new CardService($baseEntityRepo);
 
         $this-> expectException(ErrorException::class);
-        $cardService->GatherCardData($pan);
+        $cardService->gatherCardData($pan);
     }
 
 

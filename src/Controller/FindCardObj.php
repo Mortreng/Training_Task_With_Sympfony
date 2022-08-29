@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class findCardData extends AbstractController
+class FindCardObj extends AbstractController
 {
 
     private CardService $cardService;
@@ -17,8 +17,8 @@ class findCardData extends AbstractController
         $this->cardService = $cardService;
     }
 
-    #[Route('/find_card/{id}', name:'find_card', methods:['GET'])]
-    public function FindCardData(int $id): Response {
+    #[Route('/card/find_card/{id}', name:'find_card', methods:['GET'])]
+    public function __invoke(int $id): Response {
         $card = $this->cardService->findCardObj($id);
         if ($card != null) {
             $card = $this->json($card)->getContent();
