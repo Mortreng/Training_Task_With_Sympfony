@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\BaseEntity;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 class BaseEntityRepository extends ServiceEntityRepository

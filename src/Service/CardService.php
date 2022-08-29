@@ -6,20 +6,18 @@ use App\Entity\Card;
 use App\Entity\CardVendors;
 use App\Repository\BaseEntityRepository;
 use ErrorException;
-use Psr\Log\LoggerInterface;
-use TypeError;
 
 class CardService
 {
     private BaseEntityRepository $baseEntityRepository;
 
     public function __construct(
-        BaseEntityRepository $baseEntityRepository,
+        BaseEntityRepository $baseEntityRepository
     ) {
         $this->baseEntityRepository = $baseEntityRepository;
     }
 
-    private function VerifyCardPan(string $pan): bool {
+    private function verifyCardPan(string $pan): bool {
         $digits = strrev(preg_replace('/\D+/', '', $pan));
         $sum = 0;
 
@@ -42,7 +40,7 @@ class CardService
         }
     }
 
-    private function DetermineCardVendor(string $pan): CardVendors {
+    private function determineCardVendor(string $pan): CardVendors {
 
         // Magic numbers, need to somehow get those values from the config.
         $cardPrefixes = [
@@ -69,20 +67,13 @@ class CardService
     /**
      * @throws ErrorException
      */
-    public function GatherCardData(string $pan): Card {
+    public function gatherCardData(string $pan): int {
         if ($this->VerifyCardPan($pan)) {
             $vendor = $this->DetermineCardVendor($pan);
             if ($vendor != CardVendors::Unknown) {
                 $card = new Card($pan, $vendor);
                 $cardId = $this->baseEntityRepository->setEntity($card);
-                $card = $this->baseEntityRepository->findEntity($cardId);
-
-                if ($card instanceof Card) {
-                    return $card;
-                } else {
-                    $class = $card::class;
-                    throw new TypeError("Expected type Card, got type $class instead");
-                }
+                return $cardId;
 
             } else {
                 throw new ErrorException("Unknown card vendor, we support Visa, Master Card, Maestro, Daroni Credit" . PHP_EOL);
@@ -91,7 +82,7 @@ class CardService
             throw new ErrorException("$pan didn't pass the Luhm algorithm" . PHP_EOL);
         }
     }
-    public function FindCardObj(int $id): ?Card {
+    public function findCardObj(int $id): ?Card {
         $card = $this->baseEntityRepository->findEntity($id);
         if ($card instanceof Card) {
             return $card;

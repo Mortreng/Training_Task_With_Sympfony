@@ -19,7 +19,7 @@ class FindCardObj extends AbstractController
 
     #[Route('/card/find_card/{id}', name:'find_card', methods:['GET'])]
     public function __invoke(int $id): Response {
-        $card = $this->cardService->FindCardObj($id);
+        $card = $this->cardService->findCardObj($id);
         if ($card != null) {
             $card = $this->json($card)->getContent();
             return new Response("$card");

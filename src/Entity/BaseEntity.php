@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+
 use App\Repository\BaseEntityRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,11 +19,11 @@ class BaseEntity
     #[ORM\Column(type:'integer')]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
-    #[Groups(['findCardObj', 'GatherCardData'])]
+    #[Groups(['FindCardObj', 'GatherCardData'])]
     public int $id;
 
     #[ORM\Column(type: 'datetime')]
-    #[Groups(['findCardObj', 'GatherCardData'])]
+    #[Groups(['FindCardObj'])]
     public DateTime $createdTime;
 
 

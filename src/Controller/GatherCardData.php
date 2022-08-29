@@ -20,10 +20,8 @@ class GatherCardData extends AbstractController
 
     #[Route('/card/gather_card_data/{pan}', name: 'gather_card_data', methods: ['POST'])]
     public function __invoke(string $pan): Response {
-        $card = $this->cardService->GatherCardData($pan);
-        $card = $this->json($card)->getContent();
-
-        return new Response($card);
+        $cardId = $this->cardService->gatherCardData($pan);
+        return new Response($cardId);
     }
 
 }

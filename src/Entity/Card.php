@@ -18,8 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ]],
     itemOperations: ['get'=>[
         'path'=>'/card/find_card/{id}',
-        'normalization_context'=>[
-            'groups' => 'FindCardObj'],
+        'normalization_context'=>['groups' => 'FindCardObj'],
         'controller'=>FindCardObj::class
         ]
     ],
@@ -29,11 +28,11 @@ class Card extends BaseEntity
 {
 
     #[ORM\Column(type:'string')]
-    #[Groups(['FindCardObj', 'GatherCardData'])]
+    #[Groups(['FindCardObj'])]
     private string $pan;
 
     #[ORM\Column(type:'string',enumType: CardVendors::class)]
-    #[Groups(['FindCardObj', 'GatherCardData'])]
+    #[Groups(['FindCardObj'])]
     #[ApiProperty(
         attributes: [
             'openapi_context' => [
