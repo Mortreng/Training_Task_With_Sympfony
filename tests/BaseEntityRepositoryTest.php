@@ -53,9 +53,9 @@ class BaseEntityRepositoryTest extends KernelTestCase
 
         if ($entity instanceof Card) {
             $pan = $entity->getPan();
-            self::assertEquals("12412312314", $pan);
+            $this->assertEquals("12412312314", $pan);
         } else {
-            self::fail("$entity is not of the instance Card");
+            $this->fail("$entity is not of the instance Card");
         }
     }
 
