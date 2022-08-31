@@ -30,7 +30,7 @@ class BaseEntityRepositoryTest extends KernelTestCase
         $id = $entityManager
             ->getRepository(BaseEntity::class)
             ->setEntity(new BaseEntity());
-        print($id);
+
         $entity = $entityManager
             ->getRepository(BaseEntity::class)
             ->findEntity($id);
@@ -51,7 +51,12 @@ class BaseEntityRepositoryTest extends KernelTestCase
             ->getRepository(BaseEntity::class)
             ->find($id);
 
-        self::assertSame(Card::class, $entity::class);
+        if ($entity instanceof Card) {
+            $pan = $entity->getPan();
+            self::assertEquals("12412312314", $pan);
+        } else {
+            self::fail("$entity is not of the instance Card");
+        }
     }
 
     public function tearDown(): void
