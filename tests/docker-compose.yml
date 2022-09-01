@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+  database:
+    image: mysql:${MYSQL_VERSION:-5.7}
+    environment:
+      MYSQL_DB: test
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_DATABASE: TestDb_test
+    ports:
+      - "127.0.0.1:33063:3306"
